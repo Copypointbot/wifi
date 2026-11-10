@@ -1,53 +1,134 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Скан-сервис — подключение</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Гостевой Wi-Fi и бот</title>
 <style>
   body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fa;
     margin: 0;
-    font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
-    background: #f2f4f8;
-    color: #1d1d1f;
+    padding: 16px;
+    color: #222;
   }
   .card {
-    max-width: 420px;
+    background: #ffffff;
+    max-width: 480px;
     margin: 24px auto;
-    background: #fff;
-    border-radius: 16px;
-    padding: 28px 24px;
-    box-shadow: 0 4px 20px rgba(0,0,0,.08);
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    text-align: center;
   }
-  h1 { font-size: 22px; margin: 0 0 6px; }
-  p.sub { margin: 0 0 20px; color: #666; font-size: 14px; }
-  .row {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 12px 14px; border-radius: 10px; background: #f2f4f8;
-    margin-bottom: 10px; font-size: 15px;
+  h1 { font-size: 22px; margin: 0 0 8px 0; color: #1a3a6a; }
+  .subtitle { color: #666; font-size: 15px; margin: 0 0 20px 0; }
+  .step {
+    background: #f0f7ff;
+    border: 1px solid #cfe8ff;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 14px;
+    text-align: left;
+    font-size: 15px;
+    line-height: 1.5;
   }
-  .row b { word-break: break-all; }
-  .hint { font-size: 13px; color: #666; margin: 4px 0 22px; }
-  .btn {
-    display: block; text-align: center; text-decoration: none;
-    background: #2ea6ff; color: #fff; font-size: 17px; font-weight: 600;
-    padding: 15px 10px; border-radius: 12px; margin-bottom: 10px;
+  .step b { color: #1a3a6a; }
+  .netname {
+    font-weight: bold;
+    color: #0066cc;
+    user-select: all;
   }
-  .btn:active { background: #1e8fe0; }
-  .note { font-size: 12px; color: #999; text-align: center; margin: 10px 0 0; }
+  button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    font-size: 17px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 12px;
+  }
+  .btn-copy { background: #007bff; color: #fff; }
+  .btn-copy:active { background: #0056b3; }
+  .btn-bot { background: #2ea6ff; color: #fff; font-weight: bold; font-size: 18px; }
+  .btn-bot:active { background: #1b7fd4; }
+  .status { font-size: 15px; font-weight: bold; margin-top: 10px; min-height: 20px; }
+  .ok { color: #2e7d32; }
+  .fail { color: #c62828; }
+  .hint { font-size: 13px; color: #888; margin-top: 18px; }
 </style>
 </head>
 <body>
+
 <div class="card">
-  <h1>Добро пожаловать!</h1>
-  <p class="sub">Подключитесь к сети и откройте бота — два простых шага.</p>
+  <h1>Wi-Fi и бот для отправки сканов</h1>
+  <p class="subtitle">Два простых шага — и всё готово</p>
 
-  <div class="row"><span>Сеть Wi-Fi</span> <b>Gostb</b></div>
-  <div class="row"><span>Пароль</span> <b></b></div>
-  <p class="hint">Если Wi-Fi не подхватился сам — откройте настройки Wi-Fi и выберите эту сеть.</p>
+  <div class="step">
+    <b>Шаг 1. Подключитесь к Wi-Fi</b><br>
+    Откройте настройки Wi-Fi на телефоне и выберите сеть
+    <span class="netname">Guest_House</span><br>
+    Пароль можно скопировать кнопкой ниже.
+  </div>
 
-  <a class="btn" href="https://t.me/copypointbot">Открыть бота в Telegram</a>
-  <p class="note">Если кнопка не открывается — установите Telegram.</p>
+  <div class="step">
+    <b>Шаг 2. Запустите бота</b><br>
+    Нажмите кнопку ниже — откроется Telegram с ботом.
+  </div>
+
+  <button class="btn-copy" onclick="copyPassword()">📋 Скопировать пароль Wi-Fi</button>
+  <div class="status" id="status"></div>
+
+  <button class="btn-bot" onclick="openBot()">🤖 Открыть бота в Telegram</button>
+
+  <p class="hint">Если не получается — попросите помощь у сотрудника на стойке.</p>
 </div>
+
+<script>
+// ==== ДАННЫЕ, КОТОРЫЕ МОЖНО МЕНЯТЬ ====
+var WIFI_PASSWORD = "ВАШ_ПАРОЛЬ";          // пароль гостевой сети Guest_House
+var BOT_URL = "https://t.me/copypointbot"; // ссылка на вашего бота в Telegram
+// ======================================
+
+function showStatus(text, cls) {
+  var el = document.getElementById("status");
+  el.innerText = text;
+  el.className = "status " + cls;
+}
+
+function copyPassword() {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(WIFI_PASSWORD).then(function () {
+      showStatus("Пароль скопирован. Вставьте его в настройках Wi-Fi", "ok");
+    }).catch(function () {
+      fallbackCopy();
+    });
+  } else {
+    fallbackCopy();
+  }
+}
+
+// запасной способ для старых браузеров
+function fallbackCopy() {
+  var input = document.createElement("input");
+  input.value = WIFI_PASSWORD;
+  document.body.appendChild(input);
+  input.select();
+  var done = false;
+  try { done = document.execCommand("copy"); } catch (e) {}
+  document.body.removeChild(input);
+  if (done) {
+    showStatus("Пароль скопирован. Вставьте его в настройках Wi-Fi", "ok");
+  } else {
+    showStatus("Не скопировалось. Пароль: " + WIFI_PASSWORD, "fail");
+  }
+}
+
+function openBot() {
+  window.location.href = BOT_URL;
+}
+</script>
+
 </body>
 </html>
