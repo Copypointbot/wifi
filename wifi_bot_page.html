@@ -39,6 +39,10 @@
     color: #0066cc;
     user-select: all;
   }
+  .bigpass {
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
   button {
     display: block;
     width: 100%;
@@ -69,7 +73,9 @@
     <b>Шаг 1. Подключитесь к Wi-Fi</b><br>
     Откройте настройки Wi-Fi на телефоне и выберите сеть
     <span class="netname">Sambatya</span><br>
-    Пароль можно скопировать кнопкой ниже.
+    Пароль от сети:
+    <span class="netname bigpass" id="wifipass"></span><br>
+    Его можно скопировать кнопкой ниже или выделить и скопировать прямо отсюда.
   </div>
 
   <div class="step">
@@ -87,9 +93,12 @@
 
 <script>
 // ==== ДАННЫЕ, КОТОРЫЕ МОЖНО МЕНЯТЬ ====
-var WIFI_PASSWORD = "03292305";          // пароль гостевой сети Guest_House
+var WIFI_PASSWORD = "03292305";          // пароль гостевой сети Sambatya
 var BOT_URL = "https://t.me/copypointbot"; // ссылка на вашего бота в Telegram
 // ======================================
+
+// показать пароль на странице в шаге 1
+document.getElementById("wifipass").innerText = WIFI_PASSWORD;
 
 function showStatus(text, cls) {
   var el = document.getElementById("status");
