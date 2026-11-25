@@ -5,58 +5,24 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Гостевой Wi-Fi и бот</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f5f7fa;
-    margin: 0;
-    padding: 16px;
-    color: #222;
-  }
-  .card {
-    background: #ffffff;
-    max-width: 480px;
-    margin: 24px auto;
-    padding: 24px;
-    border-radius: 14px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    text-align: center;
-  }
+  body { font-family: Arial, sans-serif; background: #f5f7fa; margin: 0; padding: 16px; color: #222; }
+  .card { background: #ffffff; max-width: 480px; margin: 24px auto; padding: 24px; border-radius: 14px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); text-align: center; }
   h1 { font-size: 22px; margin: 0 0 8px 0; color: #1a3a6a; }
   .subtitle { color: #666; font-size: 15px; margin: 0 0 20px 0; }
-  .step {
-    background: #f0f7ff;
-    border: 1px solid #cfe8ff;
-    border-radius: 10px;
-    padding: 14px;
-    margin-bottom: 14px;
-    text-align: left;
-    font-size: 15px;
-    line-height: 1.5;
-  }
+  .step { background: #f0f7ff; border: 1px solid #cfe8ff; border-radius: 10px; padding: 14px; margin-bottom: 14px; text-align: left; font-size: 15px; line-height: 1.5; }
   .step b { color: #1a3a6a; }
-  .netname {
-    font-weight: bold;
-    color: #0066cc;
-    user-select: all;
-  }
-  .bigpass {
-    font-size: 20px;
-    letter-spacing: 1px;
-  }
-  button {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    font-size: 17px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    margin-top: 12px;
-  }
+  .netname-block { font-weight: bold; color: #0066cc; text-align: center; white-space: nowrap; font-size: 19px; margin: 12px 0 4px 0; user-select: all; }
+  .netname { font-weight: bold; color: #0066cc; user-select: all; }
+  .bigpass { font-size: 20px; letter-spacing: 1px; }
+  .qrwrap { text-align: center; margin: 14px 0 6px 0; }
+  .qrwrap img { width: 210px; height: 210px; border-radius: 8px; box-shadow: 0 1px 6px rgba(0,0,0,0.15); }
+  button { display: block; width: 100%; padding: 15px; font-size: 17px; border: none; border-radius: 10px; cursor: pointer; margin-top: 12px; }
   .btn-copy { background: #007bff; color: #fff; }
   .btn-copy:active { background: #0056b3; }
   .btn-bot { background: #2ea6ff; color: #fff; font-weight: bold; font-size: 18px; }
   .btn-bot:active { background: #1b7fd4; }
+  .btn-max { background: #8e5bf7; color: #fff; font-weight: bold; font-size: 18px; }
+  .btn-max:active { background: #6f3fe0; }
   .status { font-size: 15px; font-weight: bold; margin-top: 10px; min-height: 20px; }
   .ok { color: #2e7d32; }
   .fail { color: #c62828; }
@@ -71,33 +37,35 @@
 
   <div class="step">
     <b>Шаг 1. Подключитесь к Wi-Fi</b><br>
-    Откройте настройки Wi-Fi на телефоне и выберите сеть
-    <span class="netname">OFFICE-YSLUGI</span><br>
-    Пароль от сети:
-    <span class="netname bigpass" id="wifipass"></span><br>
+    Наведите камеру телефона на QR-код — телефон сам предложит подключиться к сети.
+    <div class="qrwrap"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASgAAAEoCAIAAABkZftOAAAFd0lEQVR4nO3dy24cORAAwZ2F//+X5cOeG3AbrM2iFHEW5qVJ8FAozufr6+sf4P/1b/0C4CcSHgSEBwHhQUB4EBAeBIQHAeFBQHgQEB4EhAcB4UFAeBAQHgSEBwHhQUB4EBAeBIQHAeFBQHgQEB4EhAcB4UFAeBAQHgSEBwHhQUB4EBAeBIQHgV/TT/D5fKaf4oi3vxP49L6mH2f6eZ+cej3f9fvwlhMPAsKDgPAgIDwICA8CwoOA8CAwPsd7Mj0nebJtjjQ9H3v6++rzf/LTvg9OPAgIDwLCg4DwICA8CAgPAsKDQDbHe3JqrnJqLlTNeab38Z6c2tM7Zdv34RQnHgSEBwHhQUB4EBAeBIQHAeFBYN0c7xbVvZGnnvfUnt70XPG7cuJBQHgQEB4EhAcB4UFAeBAQHgTM8f7Stt+XMze7ixMPAsKDgPAgIDwICA8CwoOA8CCwbo53yzxqei/urW33YZ5yy+t8y4kHAeFBQHgQEB4EhAcB4UFAeBDI5njV785tc2q/7tRcsdr3+2nfByceBIQHAeFBQHgQEB4EhAcB4UHg8133nU45Ndea3pdz3+ZdnHgQEB4EhAcB4UFAeBAQHgSEB4HxOd6p33+bNn2/5fQ9nNWc8O3j3/7/PcWJBwHhQUB4EBAeBIQHAeFBQHgQGL9X89T8ZNscbNrb13nLHPLJqff79Pfb9hWdeBAQHgSEBwHhQUB4EBAeBIQHgXX7eNOPf8vcb9vzPtn2OWzbu3vixIOA8CAgPAgIDwLCg4DwICA8CGT7eKfmMNN7XG/dMkfa9jqnvyfT946+5cSDgPAgIDwICA8CwoOA8CAgPAhk+3inVPtj2/YYq9/Hm96rPGXb3NKJBwHhQUB4EBAeBIQHAeFBQHgQGN/He1Ldlzg995ueR1X7aW9V/0e/jwc8Eh4EhAcB4UFAeBAQHgSEB4HsXs1Tf39qb216nrPtfU3fR1rtDU4/zilOPAgIDwLCg4DwICA8CAgPAsKDQHav5rY5T3Vv5O33glZz1G37dW858SAgPAgIDwLCg4DwICA8CAgPAuNzvLem51Tb5mBPpuefb93yfrfNh5848SAgPAgIDwLCg4DwICA8CAgPAtk+3lvb5jO379dVr796/G37e048CAgPAsKDgPAgIDwICA8CwoPAuns13z7OKbfPCbd9Ptvmgds48SAgPAgIDwLCg4DwICA8CAgPAr/qF/Cnts3Zpuda2/bKqnssp+eT1efpxIOA8CAgPAgIDwLCg4DwICA8CKzbx5ueq1Tzpe+6zzY9Zztl2/6eEw8CwoOA8CAgPAgIDwLCg4DwIDA+x7vd9Jzt9s+/mrtu21d8y4kHAeFBQHgQEB4EhAcB4UFAeBAYv1fz9n2tbfd5Prll3njLnG2aEw8CwoOA8CAgPAgIDwLCg4DwIJD9Pl41t3k7f/uu87pTz/uWeeB/nHgQEB4EhAcB4UFAeBAQHgSEB4Fsjvdk27zorel7IE/tB7719nm37WFum8c68SAgPAgIDwLCg4DwICA8CAgPAuvmeLeYnmtNz51u+d25bfPAU5x4EBAeBIQHAeFBQHgQEB4EhAcBc7y/VO13Te+/nZrvPZneJ9y2d/fEiQcB4UFAeBAQHgSEBwHhQUB4EFg3x9v2+2an9tOm7ws9tS9XzcFumROe4sSDgPAgIDwICA8CwoOA8CAgPAhkc7xtc5Un0/dhTrt9T++UbfNhJx4EhAcB4UFAeBAQHgSEBwHhQeCzbb4BP4ETDwLCg4DwICA8CAgPAsKDgPAgIDwICA8CwoOA8CAgPAgIDwLCg4DwICA8CAgPAsKDgPAgIDwICA8CwoOA8CAgPAgIDwLCg4DwICA8CAgPAsKDgPAg8Bs6LEVHzb2f/wAAAABJRU5ErkJggg==" alt="QR-код Wi-Fi OFFICE-YSLUGI"></div>
+    Если камера не читает код — выберите сеть вручную:
+    <div class="netname-block">OFFICE-YSLUGI</div>
+    Пароль от сети: <span class="netname bigpass" id="wifipass"></span><br>
     Его можно скопировать кнопкой ниже или выделить и скопировать прямо отсюда.
   </div>
 
   <div class="step">
     <b>Шаг 2. Запустите бота</b><br>
-    Нажмите кнопку ниже — откроется Telegram с ботом.
+    Нажмите кнопку ниже — откроется Telegram или MAX с ботом.
   </div>
 
   <button class="btn-copy" onclick="copyPassword()">📋 Скопировать пароль Wi-Fi</button>
   <div class="status" id="status"></div>
 
-  <button class="btn-bot" onclick="openBot()">🤖 Открыть бота в Telegram</button>
+  <button class="btn-bot" onclick="openBot(BOT_URL_TG)">🤖 Открыть бота в Telegram</button>
+  <button class="btn-max" onclick="openBot(BOT_URL_MAX)">🟣 Открыть бота в MAX</button>
 
   <p class="hint">Если не получается — попросите помощь у сотрудника на стойке.</p>
 </div>
 
 <script>
 // ==== ДАННЫЕ, КОТОРЫЕ МОЖНО МЕНЯТЬ ====
-var WIFI_PASSWORD = "1234512345";          // пароль гостевой сети OFFICE-YSLUGI
-var BOT_URL = "https://t.me/copypointbot"; // ссылка на вашего бота в Telegram
+var WIFI_PASSWORD = "1234512345";                  // пароль гостевой сети OFFICE-YSLUGI
+var BOT_URL_TG  = "https://t.me/copypointbot";     // Telegram-бот
+var BOT_URL_MAX = "https://max.ru/@se15036304_bot"; // MAX-бот
 // ======================================
 
-// показать пароль на странице в шаге 1
 document.getElementById("wifipass").innerText = WIFI_PASSWORD;
 
 function showStatus(text, cls) {
@@ -118,7 +86,6 @@ function copyPassword() {
   }
 }
 
-// запасной способ для старых браузеров
 function fallbackCopy() {
   var input = document.createElement("input");
   input.value = WIFI_PASSWORD;
@@ -134,8 +101,8 @@ function fallbackCopy() {
   }
 }
 
-function openBot() {
-  window.location.href = BOT_URL;
+function openBot(url) {
+  window.location.href = url;
 }
 </script>
 
